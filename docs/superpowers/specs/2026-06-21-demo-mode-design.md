@@ -211,7 +211,29 @@ A pre-filled login screen renders on first load (no active session):
 
 ---
 
-## 9. Files Created / Modified
+## 9. Deployment Topology
+
+| Service | Platform | Notes |
+|---|---|---|
+| Backend (Express + pg-boss) | **Render** | Web service; `node backend/server.js`; env vars set in Render dashboard |
+| `frontend-admin` | **Vercel** | CRA SPA; `REACT_APP_API_URL` = Render backend URL |
+| `frontend-scanner` | **Vercel** | CRA PWA; `REACT_APP_API_URL` = Render backend URL |
+
+**SPA rewrites (`vercel.json`)** — required in both `frontend-admin/` and `frontend-scanner/` so client-side routes (e.g. `/activity`, `/connect`) don't 404 on hard refresh:
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+**CORS:** `ALLOWED_ORIGINS` on the backend lists both Vercel frontend URLs (e.g. `https://syncstock-admin.vercel.app,https://syncstock-scanner.vercel.app`). Set in Render environment variables.
+
+**`render.yaml`** (optional but recommended): declares the web service so deploys are reproducible. Not strictly required for the demo.
+
+---
+
+## 10. Files Created / Modified
 
 | File | Action |
 |---|---|
@@ -224,4 +246,6 @@ A pre-filled login screen renders on first load (no active session):
 | `routes/demo.js` | Create (`POST /demo/reset` — DEMO_MODE only) |
 | `server.js` | Mount `/api/inventory` + `/api/demo` routers; add CORS with `ALLOWED_ORIGINS` |
 | `frontend-admin/` | Build (CRA + Polaris standalone) |
+| `frontend-admin/vercel.json` | Create — SPA rewrite `/* → /index.html` |
 | `frontend-scanner/` | Build (CRA PWA + zxing-browser) |
+| `frontend-scanner/vercel.json` | Create — SPA rewrite `/* → /index.html` |
