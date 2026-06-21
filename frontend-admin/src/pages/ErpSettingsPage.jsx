@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Page, Card, FormLayout, TextField, Button, Banner, Text, Select, InlineStack } from '@shopify/polaris';
 import { useTranslation } from 'react-i18next';
 import api from '../lib/api';
 
@@ -27,22 +26,17 @@ export default function ErpSettingsPage() {
     });
   }, []);
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     setLoading(true);
     setMessage(null);
     try {
-      await api.post('/api/erp/settings', {
-        erp_type: erpType,
-        url,
-        database_name: databaseName,
-        username,
-        password,
-      });
+      await api.post('/api/erp/settings', { erp_type: erpType, url, database_name: databaseName, username, password });
       setMessage({ tone: 'success', text: t('connected') });
       const { data } = await api.get('/api/erp/settings');
       setSettings(data.settings);
     } catch (e) {
-      setMessage({ tone: 'critical', text: e.response?.data?.error || 'Error' });
+      setMessage({ tone: 'danger', text: e.response?.data?.error || 'Error' });
     }
     setLoading(false);
   };
@@ -52,48 +46,82 @@ export default function ErpSettingsPage() {
     setMessage(null);
     try {
       const { data } = await api.post('/api/erp/test', {});
-      setMessage({ tone: data.success ? 'success' : 'critical', text: data.message });
+      setMessage({ tone: data.success ? 'success' : 'danger', text: data.message });
       if (data.success) {
         const { data: settingsData } = await api.get('/api/erp/settings');
         setSettings(settingsData.settings);
       }
     } catch (e) {
-      setMessage({ tone: 'critical', text: e.response?.data?.error || 'Error' });
+      setMessage({ tone: 'danger', text: e.response?.data?.error || 'Error' });
     }
     setTestLoading(false);
   };
 
-  const erpOptions = [
-    { label: t('odoo'), value: 'odoo' },
-  ];
+  const bannerClass =
+    message?.tone === 'success'
+      ? 'border-success bg-success/10 text-success'
+      : 'border-danger bg-danger/10 text-danger';
 
   return (
-    <Page title={t('erp')}>
-      <Card>
-        <div style={{ padding: 24 }}>
-          {settings?.is_connected && (
-            <div style={{ marginBottom: 16 }}>
-              <Banner tone="success">{t('connected')}</Banner>
+    <div className="space-y-lg">
+      <div className="flex items-center gap-2">
+        <span className="material-symbols-outlined text-primary">settings_ethernet</span>
+        <h2 className="font-headline text-headline-md text-on-surface">{t('erp')}</h2>
+        {settings?.is_connected && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 font-label-caps text-label-caps text-success">
+            <span className="h-2 w-2 rounded-full bg-success animate-pulseDot" />
+            {t('connected')}
+          </span>
+        )}
+      </div>
+
+      <form onSubmit={handleSave} className="card max-w-xl space-y-md">
+        {message && (
+          <div className={`flex items-center justify-between rounded-md border p-md ${bannerClass}`}>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">
+                {message.tone === 'success' ? 'check_circle' : 'error'}
+              </span>
+              <span className="font-body-sm text-body-sm">{message.text}</span>
             </div>
-          )}
-          {message && (
-            <div style={{ marginBottom: 16 }}>
-              <Banner tone={message.tone} onDismiss={() => setMessage(null)}>{message.text}</Banner>
-            </div>
-          )}
-          <FormLayout>
-            <Select label={t('erpType')} options={erpOptions} value={erpType} onChange={setErpType} />
-            <TextField label={t('erpUrl')} value={url} onChange={setUrl} placeholder="http://localhost:8069" />
-            <TextField label={t('erpDatabase')} value={databaseName} onChange={setDatabaseName} />
-            <TextField label={t('erpUsername')} value={username} onChange={setUsername} />
-            <TextField label={t('erpPassword')} type="password" value={password} onChange={setPassword} />
-            <InlineStack gap="400">
-              <Button variant="primary" loading={loading} onClick={handleSave}>{t('saveSettings')}</Button>
-              <Button loading={testLoading} onClick={handleTest}>{t('testConnection')}</Button>
-            </InlineStack>
-          </FormLayout>
+            <button type="button" onClick={() => setMessage(null)} className="rounded-full p-1 hover:bg-surface">
+              <span className="material-symbols-outlined text-[16px]">close</span>
+            </button>
+          </div>
+        )}
+        <div>
+          <label className="field-label">{t('erpType')}</label>
+          <select value={erpType} onChange={(e) => setErpType(e.target.value)} className="field-input">
+            <option value="odoo">{t('odoo')}</option>
+          </select>
         </div>
-      </Card>
-    </Page>
+        <div>
+          <label className="field-label">{t('erpUrl')}</label>
+          <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="http://localhost:8069" className="field-input" />
+        </div>
+        <div>
+          <label className="field-label">{t('erpDatabase')}</label>
+          <input value={databaseName} onChange={(e) => setDatabaseName(e.target.value)} className="field-input" />
+        </div>
+        <div>
+          <label className="field-label">{t('erpUsername')}</label>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} className="field-input" />
+        </div>
+        <div>
+          <label className="field-label">{t('erpPassword')}</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="field-input" />
+        </div>
+        <div className="flex gap-sm">
+          <button type="submit" disabled={loading} className="btn-primary">
+            {loading && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
+            {t('saveSettings')}
+          </button>
+          <button type="button" onClick={handleTest} disabled={testLoading} className="btn-ghost">
+            {testLoading && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
+            {t('testConnection')}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

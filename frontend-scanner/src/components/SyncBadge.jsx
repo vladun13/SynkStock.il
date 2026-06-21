@@ -1,14 +1,34 @@
 import React from 'react';
 import { t } from '../lib/i18n';
 
-const S = {
-  synced: { background: '#AEE9D1', color: '#003B2B', borderRadius: 12, padding: '2px 10px', fontSize: 13 },
-  pending: { background: '#FFD79D', color: '#7E5700', borderRadius: 12, padding: '2px 10px', fontSize: 13 },
-  error: { background: '#FEAD9A', color: '#700000', borderRadius: 12, padding: '2px 10px', fontSize: 13 },
-};
-
 export default function SyncBadge({ status }) {
-  if (status === 'synced') return <span style={S.synced}>{t('synced')}</span>;
-  if (status === 'pending') return <span style={S.pending}>{t('syncing')}</span>;
-  return <span style={S.error}>{status}</span>;
+  if (status === 'synced') {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-1 font-label-caps text-label-caps text-success">
+        <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+        {t('synced')}
+      </span>
+    );
+  }
+  if (status === 'pending') {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-1 font-label-caps text-label-caps text-warning">
+        <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+        {t('syncing')}
+      </span>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-danger/15 px-2 py-1 font-label-caps text-label-caps text-danger">
+        <span className="material-symbols-outlined text-[14px]">error</span>
+        {t('error')}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2 py-1 font-label-caps text-label-caps text-on-surface-variant">
+      {status}
+    </span>
+  );
 }

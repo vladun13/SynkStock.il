@@ -9,7 +9,8 @@ Shopify inventory sync app for Israeli SMB merchants. Keeps stock accurate acros
 - **Infra:** Supabase (DB + Realtime + Vault), Express backend, React frontend
 - **Source of truth:** SyncStock (not ERP)
 - **Migrations:** knex against direct `:5432`; never the pooled port for DDL
-- **Frontend:** functional structure only — data flow, Realtime wiring, RTL/i18n, Polaris defaults; visual polish is a separate track
+- **Frontend:** three CRA apps (admin, scanner, landing). Functional structure first; visual layer is Tailwind (Material-3-style tokens), not Polaris — admin's `AppFrame` is the Tailwind shell. Polaris remains a dependency in some pages but the chrome is Tailwind.
+- **Demo:** `DEMO_MODE=true` gates a self-contained demo — seeded Hebrew inventory + mock Shopify/Odoo clients (same interface, instant success). The atomic loop, JWT auth, RLS, pg-boss worker, and Realtime all run for real against Supabase. No real Shopify/Odoo credentials needed.
 
 ## Architecture
 
@@ -44,9 +45,17 @@ Three rules enforced everywhere:
 
 ```
 syncstock/
-├── backend/{server.js, db/{supabase.js,migrations/}, routes/, services/{erp/}, models/}
-├── frontend-admin/
-└── frontend-scanner/
+├── backend/
+│   ├── server.js                      # CORS (ALLOWED_ORIGINS), route mounts, pg-boss startup
+│   ├── config.js                      # validateEnv + getIntegrationStatus
+│   ├── db/{supabase.js, migrate.js, migrations/, seed.js}
+│   ├── middleware/auth.js             # requireAuth → req.shopId = user.id
+│   ├── routes/{health,inventory,orders,erp,demo}.js   # demo.js mounted only in DEMO_MODE
+│   ├── services/{shopifyClient,odooClient,barcodeService,syncEngine}.js  # *Client mock/real swap on DEMO_MODE
+│   └── __tests__/                     # jest: inventory, orders, erp
+├── frontend-admin/    # CRA + Tailwind + Polaris + Supabase Realtime — dashboard, activity, connect, erp
+├── frontend-scanner/  # CRA PWA + @zxing/browser + idb offline queue
+└── frontend-landing/  # CRA + Tailwind marketing page
 ```
 
 ## Critical Patterns
@@ -106,7 +115,20 @@ Backend uses service-role key (bypasses RLS). Frontend uses authenticated sessio
 - `RTLProvider` + i18n toggle (Hebrew ↔ English) in both frontends
 - Typography: Heebo/Rubik (Hebrew), Inter (English)
 
+## Running the Demo
+
+```
+cd backend && npm run migrate && npm run seed && npm start   # :3000, DEMO_MODE ON, pg-boss worker
+cd frontend-admin   && npm start   # :3001
+cd frontend-scanner && npm start   # :3002
+cd frontend-landing && npm start   # :3003 (optional)
+```
+
+Login (pre-filled): `demo@syncstock.dev` / `demo1234`. Seed loads 30 Hebrew products across 2 locations (מחסן ראשי / חנות תל אביב) with mixed stock states (out-of-stock, low, healthy). `POST /api/demo/reset` (DEMO_MODE only) restores initial stock. Order webhook for the demo: authenticated `POST /api/orders/webhook` with `{order_id, webhook_id, line_items[]}` — decrements SyncStock + logs, never re-adjusts Shopify.
+
 ## Reference Docs
+
+- `docs/superpowers/plans/2026-06-21-demo-mode.md` — the DEMO_MODE build plan (15 tasks)
 
 - `PLAN.md` — full build plan with phase checklists and correctness guidance
 - `docs/prd/PRD-SyncStock-IL.md` — product requirements, personas, success metrics

@@ -175,6 +175,7 @@ Prioritized; implementation detail in the [Build Spec](./syncstock-claude-code-p
 
 - **FR-1** Full, paginated product/variant/inventory pull from Shopify on install.
 - **FR-2** Barcode scan endpoint applies stock deltas **atomically** (transaction + row lock); rejects unknown barcodes.
+- **FR-2a** Scanner supports a **manual-entry fallback** — the user can type a barcode **or SKU** (shop-scoped) instead of using the camera, resolving to the same product card and atomic adjust flow.
 - **FR-3** Order webhook (`orders/create`) is idempotent (dedupe by order ID) and propagates to local DB + ERP **only** (Shopify already decremented).
 - **FR-4** Every stock change is tagged with an **origin** (scan/order/erp/manual) to prevent sync loops.
 - **FR-5** ERP connect/test/map/push (Priority + Odoo); push is queued with retry + dead-letter.

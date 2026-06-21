@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Heebo", "Rubik", sans-serif;
+    background-color: theme("colors.bg-main");
+    color: theme("colors.on-surface");
+    overflow-x: hidden;
+  }
+
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .gradient-bg {
+    @apply bg-brand-gradient;
+  }
+  .gradient-text {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+  }
+  .btn-gradient {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-gradient font-headline text-headline-sm text-on-primary shadow-gradient transition-all hover:shadow-lg hover:opacity-90 active:scale-95;
+  }
+  .btn-gradient-sm {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-gradient font-body-sm text-body-sm text-on-primary shadow-gradient transition-opacity hover:opacity-90;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-border-subtle bg-surface font-body-md text-body-md text-on-surface-variant shadow-sm transition-colors hover:text-primary;
+  }
+}

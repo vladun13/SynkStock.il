@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Page, Card, FormLayout, TextField, Button, Banner, Text } from '@shopify/polaris';
 import { useTranslation } from 'react-i18next';
 
 export default function ConnectPage() {
@@ -9,7 +8,8 @@ export default function ConnectPage() {
   const [connected, setConnected] = useState(localStorage.getItem('shopConnected') === 'true');
   const [loading, setLoading] = useState(false);
 
-  const handleConnect = () => {
+  const handleConnect = (e) => {
+    e.preventDefault();
     setLoading(true);
     setTimeout(() => {
       localStorage.setItem('shopConnected', 'true');
@@ -19,20 +19,46 @@ export default function ConnectPage() {
   };
 
   return (
-    <Page title={t('connectStore')}>
-      <Card>
-        <div style={{ padding: 24 }}>
-          {connected
-            ? <Banner tone="success">{t('connected')}</Banner>
-            : <FormLayout>
-                <Text as="p" tone="subdued">{t('demoModeNoCredentials')}</Text>
-                <TextField label={t('shopDomain')} value={domain} onChange={setDomain} placeholder="your-store.myshopify.com" />
-                <TextField label={t('apiKey')} value={apiKey} onChange={setApiKey} />
-                <Button variant="primary" loading={loading} onClick={handleConnect}>{t('connect')}</Button>
-              </FormLayout>
-          }
-        </div>
-      </Card>
-    </Page>
+    <div className="space-y-lg">
+      <div className="flex items-center gap-2">
+        <span className="material-symbols-outlined text-primary">storefront</span>
+        <h2 className="font-headline text-headline-md text-on-surface">{t('connectStore')}</h2>
+      </div>
+
+      <div className="card max-w-xl">
+        {connected ? (
+          <div className="flex items-center gap-3 rounded-lg bg-success/10 p-md text-success">
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+            <span className="font-body-md text-body-md font-medium">{t('connected')}</span>
+          </div>
+        ) : (
+          <form onSubmit={handleConnect} className="space-y-md">
+            <p className="font-body-sm text-body-sm text-text-secondary">{t('demoModeNoCredentials')}</p>
+            <div>
+              <label className="field-label">{t('shopDomain')}</label>
+              <input
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                placeholder="your-store.myshopify.com"
+                className="field-input"
+              />
+            </div>
+            <div>
+              <label className="field-label">{t('apiKey')}</label>
+              <input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="field-input"
+              />
+            </div>
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
+              {t('connect')}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }

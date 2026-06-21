@@ -4,36 +4,50 @@ import SyncBadge from './SyncBadge';
 
 export default function ProductCard({ product, available, syncStatus, onAdjust, loading }) {
   return (
-    <div dir="rtl" style={{
-      background: 'white',
-      borderRadius: 12,
-      padding: 20,
-      margin: '16px auto',
-      maxWidth: 400,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-      fontFamily: 'Heebo, sans-serif',
-    }}>
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', marginBottom: 12 }}>
-        <img src={product.image_url} alt={product.title}
-          style={{ width: 80, height: 80, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>{product.title}</div>
-          <div style={{ color: '#637381', fontSize: 13 }}>{product.sku}</div>
-          <div style={{ color: '#637381', fontSize: 13 }}>{product.barcode}</div>
+    <div className="mx-auto -mt-6 w-full max-w-[420px] rounded-xl border border-border-subtle bg-surface p-lg shadow-card-elevated">
+      <div className="mb-md flex items-start justify-between">
+        <div className="flex items-start gap-md">
+          {product.image_url ? (
+            <img src={product.image_url} alt={product.title} className="h-16 w-16 rounded-lg object-cover" />
+          ) : (
+            <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-surface-container-high">
+              <span className="material-symbols-outlined text-on-surface-variant">image</span>
+            </div>
+          )}
+          <div>
+            <h3 className="font-headline text-headline-sm text-on-surface">{product.title}</h3>
+            <p className="font-body-sm text-body-sm text-text-secondary">
+              <span className="font-mono">{product.sku}</span>
+            </p>
+            <p className="font-body-sm text-body-sm text-text-secondary">
+              <span className="font-mono">{product.barcode}</span>
+            </p>
+          </div>
         </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <span style={{ fontSize: 24, fontWeight: 700 }}>{available}</span>
         {syncStatus && <SyncBadge status={syncStatus} />}
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={() => onAdjust(-1)} disabled={loading || available === 0}
-          style={{ flex: 1, padding: 12, borderRadius: 8, border: '1px solid #E0E0E0', background: '#FFF4F4', fontSize: 18, cursor: 'pointer' }}>
-          − {t('sell')}
+
+      <div className="mb-md flex items-center justify-between rounded-lg bg-bg-main p-md">
+        <span className="font-body-sm text-body-sm text-text-secondary">{t('currentStock')}</span>
+        <span className="font-rubik text-data-stock text-primary">{available} {t('units')}</span>
+      </div>
+
+      <div className="flex gap-sm">
+        <button
+          onClick={() => onAdjust(-1)}
+          disabled={loading || available === 0}
+          className="btn-scan-action bg-danger disabled:opacity-50"
+        >
+          <span className="material-symbols-outlined">remove</span>
+          {t('sell')}
         </button>
-        <button onClick={() => onAdjust(1)} disabled={loading}
-          style={{ flex: 1, padding: 12, borderRadius: 8, border: '1px solid #E0E0E0', background: '#F4FFF9', fontSize: 18, cursor: 'pointer' }}>
-          + {t('receive')}
+        <button
+          onClick={() => onAdjust(1)}
+          disabled={loading}
+          className="btn-scan-action bg-success disabled:opacity-50"
+        >
+          <span className="material-symbols-outlined">add</span>
+          {t('receive')}
         </button>
       </div>
     </div>

@@ -1,10 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AppProvider } from '@shopify/polaris';
-import enTranslations from '@shopify/polaris/locales/en.json';
-import '@shopify/polaris/build/esm/styles.css';
+import { useTranslation } from 'react-i18next';
 import ProtectedRoute from './components/ProtectedRoute';
-import NavBar from './components/NavBar';
+import AppFrame from './components/AppFrame';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ActivityPage from './pages/ActivityPage';
@@ -12,12 +10,18 @@ import ConnectPage from './pages/ConnectPage';
 import ErpSettingsPage from './pages/ErpSettingsPage';
 
 function AuthedLayout({ children }) {
-  return <ProtectedRoute><NavBar>{children}</NavBar></ProtectedRoute>;
+  return (
+    <ProtectedRoute>
+      <AppFrame>{children}</AppFrame>
+    </ProtectedRoute>
+  );
 }
 
 export default function App() {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   return (
-    <AppProvider i18n={enTranslations}>
+    <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'font-heebo' : 'font-inter'}>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -28,6 +32,6 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </AppProvider>
+    </div>
   );
 }
