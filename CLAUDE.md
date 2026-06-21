@@ -88,6 +88,8 @@ Backend uses service-role key (bypasses RLS). Frontend uses authenticated sessio
 
 **Queue bulkheads:** `shopify-sync` (`retryLimit:3, retryDelay:5`) and `erp-sync` (`retryLimit:5, retryDelay:30`) are separate so a flaky ERP never blocks Shopify. Add circuit breaker (opossum) around ERP calls.
 
+**pg-boss v10 gotchas:** (1) queues MUST be created with `boss.createQueue(name)` before `send()`/`work()` — otherwise `send()` is a *silent no-op* (no job, no error). (2) the `work()` handler receives a **batch (array)** of jobs — iterate `jobs`, don't destructure `{ data }` off the array. (3) use `{ batchSize }`, not v9's `teamSize/teamConcurrency`. Worker only starts under `require.main === module`, so tests must call `startSyncWorker()` themselves.
+
 ## Build Phases
 
 | # | Phase | Key outcome |
