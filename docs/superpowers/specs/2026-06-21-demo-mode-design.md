@@ -120,7 +120,11 @@ Returns all `inventory_levels` for the authenticated shop at the given location.
 
 ### Auth
 
-A pre-filled login screen renders on first load (no active session). Email and password fields are pre-populated with `demo@syncstock.dev` / `demo1234`. User clicks "Sign In" once → `supabase.auth.signInWithPassword(...)` → redirect to `/`. Session stored in `localStorage`.
+A pre-filled login screen renders on first load (no active session):
+- Email field pre-populated: `demo@syncstock.dev`
+- Password field pre-populated: `demo1234`
+- Helper text: *"Demo account — click Sign in."*
+- On submit: `supabase.auth.signInWithPassword(...)` → redirect to `/`. Session stored in `localStorage`.
 
 ### Routes
 
@@ -141,9 +145,14 @@ A pre-filled login screen renders on first load (no active session). Email and p
 
 **Main — inventory table:**
 - Location filter tabs (מחסן ראשי / חנות תל אביב / All)
-- Columns: Product image · Name · SKU · Barcode · Available · Sync status badge
+- Columns: Product image · Name · SKU · Barcode · Available · Actions · Sync status badge
+- **Actions column:** `−` (Sell) and `+` (Receive) buttons per row → `POST /api/inventory/adjust` with `{ barcode, locationId, delta: ±1, actionId: "admin:productId:timestamp" }`. Allows full demo without a barcode scanner.
 - Low stock rows: yellow badge. Out-of-stock rows: red badge.
 - Realtime subscription on `inventory_levels` → rows update live without refresh
+
+**Reset demo button** (top-right, admin only):
+- Calls `POST /api/demo/reset` → backend re-runs seed script logic (restores all stock levels to initial values)
+- Shows confirmation modal before executing
 
 ### Activity Feed (`/activity`)
 
@@ -182,7 +191,17 @@ A pre-filled login screen renders on first load (no active session). Email and p
 
 ---
 
-## 7. Key Invariants (non-negotiable)
+## 7. Backend Config & CORS
+
+**CORS:** `cors({ origin: process.env.ALLOWED_ORIGINS?.split(',') ?? '*' })` in `server.js`. For deployed demo, `ALLOWED_ORIGINS` lists the frontend domains. Falls back to `*` in local dev.
+
+**API URL:** Both frontends read `REACT_APP_API_URL` from `.env` (e.g. `http://localhost:3000` locally, deployed backend URL in production). No hardcoded localhost.
+
+**Demo reset endpoint:** `POST /api/demo/reset` — only registered when `DEMO_MODE=true`. Calls the seed logic (idempotent upserts, restores stock to initial values). Protected by the same JWT auth middleware; only the authenticated demo user can call it.
+
+---
+
+## 8. Key Invariants (non-negotiable)
 
 - `processed_events` INSERT is always **inside** the atomic transaction — no orphaned idempotency keys
 - `syncStatus: 'pending'` in the API response — never `'synced'` synchronously
@@ -192,16 +211,17 @@ A pre-filled login screen renders on first load (no active session). Email and p
 
 ---
 
-## 8. Files Created / Modified
+## 9. Files Created / Modified
 
 | File | Action |
 |---|---|
-| `.env` / `.env.example` | Add `DEMO_MODE=true` |
+| `.env` / `.env.example` | Add `DEMO_MODE=true`, `ALLOWED_ORIGINS`, `REACT_APP_API_URL` |
 | `backend/db/migrations/20260621000002_add_image_url_to_products.js` | Create — adds `image_url text` column to `products` |
 | `backend/db/seed.js` | Create |
 | `services/shopifyClient.js` | Create (mock + real interface) |
 | `services/barcodeService.js` | Create |
 | `routes/inventory.js` | Create (`POST /adjust`, `GET /:locationId`) |
-| `server.js` | Mount `/api/inventory` router |
+| `routes/demo.js` | Create (`POST /demo/reset` — DEMO_MODE only) |
+| `server.js` | Mount `/api/inventory` + `/api/demo` routers; add CORS with `ALLOWED_ORIGINS` |
 | `frontend-admin/` | Build (CRA + Polaris standalone) |
 | `frontend-scanner/` | Build (CRA PWA + zxing-browser) |
