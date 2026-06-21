@@ -1,2 +1,38 @@
-.serena/
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Agent / tooling artifacts
+.agents/
 .claude/
+.serena/
+opencode.json
+skills-lock.json
+
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+build/
+dist/
+.next/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime
+.DS_Store
+*.pem
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+
+# Misc
+*.local
