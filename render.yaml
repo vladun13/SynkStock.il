@@ -1,0 +1,31 @@
+# Render Blueprint — SyncStock backend (Express + pg-boss worker)
+# Deploy: Render dashboard → New → Blueprint → pick this repo.
+# Secrets (sync:false) are entered in the dashboard, never committed.
+services:
+  - type: web
+    name: syncstock-backend
+    runtime: node
+    rootDir: backend
+    plan: free            # NOTE: free web services sleep on inactivity → pg-boss worker pauses
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEMO_MODE
+        value: "true"     # mock Shopify/Odoo; real Supabase + atomic loop + worker
+      # Render injects PORT automatically — do not set it.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false        # pooled :6543
+      - key: DIRECT_URL
+        sync: false        # direct :5432
+      - key: ALLOWED_ORIGINS
+        sync: false        # set AFTER Vercel URLs exist (step 3 of runbook)
