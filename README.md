@@ -129,13 +129,19 @@ npm run seed                # seed 30 demo products across 2 locations
 npm start                   # :3000
 
 # Admin frontend
-cd frontend-admin && npm install && npm start    # :3001
+cd frontend-admin && npm install
+cp .env.example .env    # fill in Supabase URL + anon key + API URL + scanner URL
+npm start               # :3001
 
 # Scanner PWA
-cd frontend-scanner && npm install && npm start  # :3002
+cd frontend-scanner && npm install
+cp .env.example .env    # fill in Supabase URL + anon key + API URL
+npm start               # :3002
 
 # Landing page
-cd frontend-landing && npm install && npm start  # :3003
+cd frontend-landing && npm install
+cp .env.example .env    # fill in admin URL + scanner URL
+npm start               # :3003
 ```
 
 Cross-app navigation uses env vars (defaults to localhost):
