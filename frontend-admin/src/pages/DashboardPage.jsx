@@ -187,7 +187,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main panels */}
-      <div className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-gutter">
         {/* Warehouse management */}
         <div className="flex min-h-[440px] flex-col rounded-lg bg-surface p-md shadow-card md:p-lg">
           <div className="mb-md flex flex-col gap-sm border-b border-border-subtle pb-sm sm:flex-row sm:items-center sm:justify-between">
@@ -229,7 +229,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Shopify live view */}
-        <div className="flex min-h-[440px] flex-col rounded-lg bg-surface p-md shadow-card md:p-lg lg:col-span-4">
+        <div className="flex min-h-[440px] flex-col rounded-lg bg-surface p-md shadow-card md:p-lg">
           <div className="mb-md flex items-center gap-2 border-b border-border-subtle pb-sm">
             <span className="material-symbols-outlined text-success">storefront</span>
             <h3 className="font-headline text-headline-sm text-on-surface">{t('shopifyLive')}</h3>
