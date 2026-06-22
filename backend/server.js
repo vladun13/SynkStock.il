@@ -25,7 +25,10 @@ if (allowedOrigins.length === 0) {
 
 app.use(helmet());
 app.use(cors({ origin: allowedOrigins }));
-app.use(express.json());
+// Capture the raw request body so the Shopify webhook route can verify the
+// HMAC signature over the exact bytes Shopify signed (JSON re-serialization
+// would change them and break verification).
+app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf; } }));
 
 app.use('/health', healthRouter);
 app.use('/api/inventory', inventoryRouter);

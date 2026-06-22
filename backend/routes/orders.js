@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const express = require('express');
 const { requireAuth } = require('../middleware/auth');
 const { resolve: resolveBarcode } = require('../services/barcodeService');
@@ -5,13 +6,55 @@ const { db } = require('../db/supabase');
 
 const router = express.Router();
 
-// Real Shopify webhooks are unauthenticated (HMAC verified).
+// Verifies an inbound Shopify webhook: HMAC signature over the raw body, then
+// resolves the tenant from the shop-domain header. Never trusts request-body
+// fields for identity. Rejects with 401 on any failure.
+async function verifyShopifyWebhook(req, res, next) {
+  const secret = process.env.SHOPIFY_API_SECRET;
+  if (!secret) {
+    // Fail closed — refuse to process webhooks we cannot authenticate.
+    console.error('SHOPIFY_API_SECRET not set — rejecting unverifiable webhook');
+    return res.status(503).json({ error: 'Webhook verification not configured' });
+  }
+
+  const hmacHeader = req.get('X-Shopify-Hmac-Sha256');
+  if (!hmacHeader || !req.rawBody) {
+    return res.status(401).json({ error: 'Missing webhook signature' });
+  }
+
+  const digest = crypto.createHmac('sha256', secret).update(req.rawBody).digest('base64');
+  const expected = Buffer.from(digest);
+  const received = Buffer.from(hmacHeader);
+  // Length check first: timingSafeEqual throws on length mismatch.
+  if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) {
+    return res.status(401).json({ error: 'Invalid webhook signature' });
+  }
+
+  const domain = req.get('X-Shopify-Shop-Domain');
+  if (!domain) return res.status(401).json({ error: 'Missing shop domain' });
+
+  let shop;
+  try {
+    shop = await db('shops').where({ shopify_domain: domain }).select('id').first();
+  } catch (err) {
+    console.error('Webhook shop lookup error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+  if (!shop) return res.status(401).json({ error: 'Unknown shop' });
+
+  // Identity is derived from the verified domain, never from the request body.
+  req.shopId = shop.id;
+  // Shopify's per-delivery webhook id is the stable idempotency key.
+  req.shopifyWebhookId = req.get('X-Shopify-Webhook-Id');
+  next();
+}
+
 // In DEMO_MODE we accept a simplified JSON payload via the authenticated admin UI.
+// In production, inbound Shopify webhooks are authenticated by HMAC + shop domain.
 if (process.env.DEMO_MODE === 'true') {
   router.use(requireAuth);
 } else {
-  // TODO: real Shopify webhook HMAC verification middleware
-  router.use((req, res, next) => next());
+  router.use(verifyShopifyWebhook);
 }
 
 router.post('/webhook', async (req, res) => {
