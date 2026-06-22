@@ -73,7 +73,7 @@ export default function ActivityPage() {
                     <span className={log.delta > 0 ? 'text-success' : 'text-danger'}>
                       {log.delta > 0 ? `+${log.delta}` : log.delta} → {log.available_after}
                     </span>
-                    <span className="text-text-secondary">{log.locations?.name || '—'}</span>
+                    <span className="text-text-secondary">{log.locations?.name ? t(`locationNames.${log.locations.name}`, { defaultValue: log.locations.name }) : '—'}</span>
                   </div>
                   <p className="font-body-sm text-body-sm text-text-secondary">
                     {new Date(log.created_at).toLocaleString(i18n?.language || 'he-IL')}
@@ -114,7 +114,7 @@ export default function ActivityPage() {
                         </span>
                       </td>
                       <td className="p-md font-body-sm text-body-sm font-mono text-on-surface">{log.available_after}</td>
-                      <td className="p-md font-body-sm text-body-sm text-text-secondary">{log.locations?.name || '—'}</td>
+                      <td className="p-md font-body-sm text-body-sm text-text-secondary">{log.locations?.name ? t(`locationNames.${log.locations.name}`, { defaultValue: log.locations.name }) : '—'}</td>
                       <td className="p-md"><SyncBadge status={log.status} /></td>
                       <td className="p-md font-body-sm text-body-sm text-text-secondary">
                         {new Date(log.created_at).toLocaleString(i18n?.language || 'he-IL')}

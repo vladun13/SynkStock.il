@@ -29,7 +29,7 @@
   "sell": "Sell",
   "scanProduct": "Scan Product to Inventory",
   "mainWarehouse": "Main Warehouse",
-  "shopifyLive": "Shopify Store — Live View",
+  "shopifyLive": "Shopify Store",
   "syncLog": "Sync Log",
   "resetDemo": "Reset Demo",
   "resetConfirm": "Reset all stock to initial demo values?",
@@ -67,8 +67,12 @@
   "connectionOk": "Connection OK",
   "connectionFailed": "Connection failed",
   "signOut": "Sign out",
-  "openScanner": "Open Scanner",
+  "openScanner": "Scan",
   "noSyncLogs": "No sync logs yet",
   "noInventory": "No products at this location",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "locationNames": {
+    "מחסן ראשי": "Main Warehouse",
+    "חנות תל אביב": "Tel Aviv Store"
+  }
 }

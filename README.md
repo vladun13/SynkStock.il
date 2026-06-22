@@ -16,6 +16,8 @@ Built as a PM home assignment: a commercial-opportunity analysis of a 16,000-mes
 
 **Login (pre-filled):** `demo@syncstock.dev` / `demo1234` — just click **Sign in**.
 
+Log into the admin and pick a location tab — you'll see the 30 products. In the scanner, scan/enter a barcode (e.g. `0000400000051`) and tap decrement; the admin dashboard updates via Realtime.
+
 ### User Flow
 
 ```

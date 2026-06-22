@@ -31,6 +31,8 @@ const TRANSLATIONS = {
     scanCamera: "סריקה במצלמה",
     enterBarcodeOrSku: "הזן ברקוד או מק\"ט",
     lookup: "חיפוש",
+    "locationNames.מחסן ראשי": "מחסן ראשי",
+    "locationNames.חנות תל אביב": "חנות תל אביב",
   },
   en: {
     brand: "SyncStock",
@@ -64,6 +66,8 @@ const TRANSLATIONS = {
     scanCamera: "Scan camera",
     enterBarcodeOrSku: "Enter barcode or SKU",
     lookup: "Look up",
+    "locationNames.מחסן ראשי": "Main Warehouse",
+    "locationNames.חנות תל אביב": "Tel Aviv Store",
   },
 };
 
@@ -75,9 +79,9 @@ export function setLanguage(lang) {
   localStorage.setItem('scanner-language', lang);
 }
 
-export function t(key) {
+export function t(key, defaultValue) {
   const lang = getLanguage();
-  return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || key;
+  return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || defaultValue || key;
 }
 
 export function isRTL() {

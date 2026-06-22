@@ -181,7 +181,7 @@ export default function ScannerPage({ session }) {
             className="rounded-md border border-outline-variant/40 bg-surface/90 px-2 py-1 font-body-sm text-body-sm text-on-surface"
           >
             {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>{loc.name}</option>
+              <option key={loc.id} value={loc.id}>{t(`locationNames.${loc.name}`, loc.name)}</option>
             ))}
           </select>
           <button

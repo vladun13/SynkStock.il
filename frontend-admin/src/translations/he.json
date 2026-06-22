@@ -17,7 +17,7 @@
   "outOfStock": "אזל המלאי",
   "salesToday": "מכירות היום",
   "connectedShops": "חנויות מחוברות",
-  "syncHealth": "בריאות סנכרון",
+  "syncHealth": "סטטוס סנכרון",
   "all": "הכל",
   "lowStockOnly": "מלאי נמוך",
   "product": "מוצר",
@@ -29,7 +29,7 @@
   "sell": "מכירה",
   "scanProduct": "סרוק מוצר למלאי",
   "mainWarehouse": "מחסן ראשי",
-  "shopifyLive": "חנות Shopify — תצוגה חיה",
+  "shopifyLive": "חנות Shopify",
   "syncLog": "יומן סנכרון",
   "resetDemo": "איפוס הדמו",
   "resetConfirm": "האם לאפס את המלאי לערכי הדמו המקוריים?",
@@ -67,8 +67,12 @@
   "connectionOk": "החיבור תקין",
   "connectionFailed": "החיבור נכשל",
   "signOut": "התנתק",
-  "openScanner": "פתח סורק",
+  "openScanner": "סריקה",
   "noSyncLogs": "אין רשומות סנכרון עדיין",
   "noInventory": "אין מוצרים במיקום זה",
-  "loading": "טוען..."
+  "loading": "טוען...",
+  "locationNames": {
+    "מחסן ראשי": "מחסן ראשי",
+    "חנות תל אביב": "חנות תל אביב"
+  }
 }

@@ -23,6 +23,8 @@ function StatCard({ label, value, tone = 'primary', icon }) {
   );
 }
 
+const translateLocation = (name, t) => (name ? t(`locationNames.${name}`, { defaultValue: name }) : name);
+
 export default function DashboardPage() {
   const { t } = useTranslation();
   const [locations, setLocations] = useState([]);
@@ -181,7 +183,7 @@ export default function DashboardPage() {
               i === selectedTab ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface-variant hover:bg-surface-container-low'
             }`}
           >
-            {loc.name}
+            {translateLocation(loc.name, t)}
           </button>
         ))}
       </div>
@@ -192,8 +194,7 @@ export default function DashboardPage() {
         <div className="flex min-h-[440px] flex-col rounded-lg bg-surface p-md shadow-card md:p-lg">
           <div className="mb-md flex flex-col gap-sm border-b border-border-subtle pb-sm sm:flex-row sm:items-center sm:justify-between">
             <h3 className="font-headline text-headline-sm text-on-surface">
-              {t('mainWarehouse')}
-              {locations[selectedTab]?.name ? ` — ${locations[selectedTab].name}` : ''}
+              {locations[selectedTab]?.name ? translateLocation(locations[selectedTab].name, t) : t('mainWarehouse')}
             </h3>
             <button onClick={() => setSimulateOpen(true)} className="btn-primary self-start sm:self-auto">
               <span className="material-symbols-outlined text-[18px]">shopping_cart</span>

@@ -56,7 +56,7 @@ export default function AppFrame({ children }) {
             aria-label="language"
           >
             <span className="material-symbols-outlined text-[18px]">language</span>
-            <span className="hidden sm:inline">{i18n.language === 'he' ? 'עברית' : 'English'}</span>
+            <span className="hidden sm:inline">{i18n.language === 'he' ? 'English' : 'עברית'}</span>
           </button>
           <button className="hidden rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-container-low active:scale-95 sm:block">
             <span className="material-symbols-outlined text-[20px]">wifi</span>
