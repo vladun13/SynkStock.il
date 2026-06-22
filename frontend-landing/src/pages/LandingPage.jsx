@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import { ADMIN_URL } from '../lib/urls';
 
 function Hero() {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ function Hero() {
           </h1>
           <p className="max-w-[500px] font-body-lg text-body-lg text-text-secondary">{t('hero.subtitle')}</p>
           <div className="flex items-center gap-4 pt-4">
-            <a href="#cta" className="btn-gradient px-6 py-3">
+            <a href={`${ADMIN_URL}/login`} className="btn-gradient px-6 py-3">
               {t('hero.ctaPrimary')}
             </a>
             <button className="flex items-center gap-2 px-6 py-3 font-body-md text-body-md text-text-secondary transition-colors hover:text-primary">
@@ -258,7 +259,7 @@ function Pricing() {
                 ))}
               </ul>
               <a
-                href="#cta"
+                href={`${ADMIN_URL}/login`}
                 className={`mt-lg w-full justify-center ${p.popular ? 'btn-gradient' : 'btn-outline'}`}
               >
                 {p.cta}
@@ -281,9 +282,9 @@ function CTA() {
         <div className="relative z-10">
           <h2 className="mb-6 font-rubik text-[36px] font-bold text-on-primary">{t('cta.title')}</h2>
           <p className="mx-auto mb-8 max-w-xl font-body-lg text-body-lg text-on-primary/90">{t('cta.subtitle')}</p>
-          <button className="rounded-xl bg-surface px-8 py-4 font-headline text-headline-sm text-primary shadow-md transition-all hover:scale-105 hover:shadow-xl">
+          <a href={`${ADMIN_URL}/login`} className="rounded-xl bg-surface px-8 py-4 font-headline text-headline-sm text-primary shadow-md transition-all hover:scale-105 hover:shadow-xl inline-block">
             {t('cta.button')}
-          </button>
+          </a>
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { SCANNER_URL } from '../lib/urls';
 import ResetDemoButton from './ResetDemoButton';
 
 const NAV_ITEMS = [
@@ -40,6 +41,15 @@ export default function AppFrame({ children }) {
           </span>
         </div>
         <div className="flex items-center gap-xs sm:gap-sm font-body-md text-body-md">
+          <a
+            href={SCANNER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 rounded-md bg-gradient-to-l from-secondary to-primary px-3 py-1.5 font-label-caps text-label-caps text-on-primary shadow-sm transition-opacity hover:opacity-90 active:scale-95"
+          >
+            <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+            <span className="hidden sm:inline">{t('openScanner')}</span>
+          </a>
           <button
             onClick={toggleLang}
             className="flex items-center gap-xs rounded-full border border-border-subtle px-2 py-1.5 font-medium text-primary transition-colors hover:bg-surface-container-low sm:px-3"

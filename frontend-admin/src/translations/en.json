@@ -67,6 +67,7 @@
   "connectionOk": "Connection OK",
   "connectionFailed": "Connection failed",
   "signOut": "Sign out",
+  "openScanner": "Open Scanner",
   "noSyncLogs": "No sync logs yet",
   "noInventory": "No products at this location",
   "loading": "Loading..."

@@ -9,7 +9,7 @@ Shopify inventory sync app for Israeli SMB merchants. Keeps stock accurate acros
 - **Infra:** Supabase (DB + Realtime + Vault), Express backend, React frontend
 - **Source of truth:** SyncStock (not ERP)
 - **Migrations:** knex against direct `:5432`; never the pooled port for DDL
-- **Frontend:** three CRA apps (admin, scanner, landing). Functional structure first; visual layer is Tailwind (Material-3-style tokens), not Polaris — admin's `AppFrame` is the Tailwind shell. Polaris remains a dependency in some pages but the chrome is Tailwind.
+- **Frontend:** three CRA apps (admin, scanner, landing). Functional structure first; visual layer is Tailwind v3 (Inventory Core design system from Google Stitch — Material-3-style tokens, Rubik/Heebo/Inter typography, Material Symbols). Admin's `AppFrame` is the Tailwind shell — Polaris dep remains but is not used for chrome. Cross-app navigation: landing → admin → scanner via `src/lib/urls.js` env vars.
 - **Demo:** `DEMO_MODE=true` gates a self-contained demo — seeded Hebrew inventory + mock Shopify/Odoo clients (same interface, instant success). The atomic loop, JWT auth, RLS, pg-boss worker, and Realtime all run for real against Supabase. No real Shopify/Odoo credentials needed.
 
 ## Architecture
@@ -37,9 +37,20 @@ Three rules enforced everywhere:
 | DB | Supabase PostgreSQL (pooled `:6543` for app, direct `:5432` for migrations) |
 | Queue | pg-boss (separate `shopify-sync` and `erp-sync` queues) |
 | Backend | Express + `@shopify/shopify-api` + `@supabase/supabase-js` + knex |
-| Admin frontend | CRA + Polaris + App Bridge + Supabase anon client (read-only Realtime) |
-| Scanner PWA | CRA PWA + zxing-browser + IndexedDB offline queue |
+| Admin frontend | CRA + Tailwind v3 (Inventory Core design system) + Supabase anon client (read-only Realtime). Polaris dep remains but chrome is Tailwind `AppFrame` |
+| Scanner PWA | CRA PWA + @zxing/browser + @zxing/library + IndexedDB offline queue |
+| Landing page | CRA + Tailwind v3 marketing page (hero, pricing, CTA) |
 | ERP | `odoo-xmlrpc` (XML-RPC); common `erpRouter` interface for later adapters |
+
+## User Flow
+
+```
+Landing Page  →  Admin Dashboard  →  Scanner PWA
+```
+
+- **Landing → Admin:** All CTA buttons + nav "Login" link → `${REACT_APP_ADMIN_URL}/login`
+- **Admin → Scanner:** Gradient "Open Scanner" button in top nav → `${REACT_APP_SCANNER_URL}` (new tab)
+- Cross-app URLs via env vars (`src/lib/urls.js` in each app), defaults to localhost
 
 ## Repo Structure
 
@@ -53,10 +64,18 @@ syncstock/
 │   ├── routes/{health,inventory,orders,erp,demo}.js   # demo.js mounted only in DEMO_MODE
 │   ├── services/{shopifyClient,odooClient,barcodeService,syncEngine}.js  # *Client mock/real swap on DEMO_MODE
 │   └── __tests__/                     # jest: inventory, orders, erp
-├── frontend-admin/    # CRA + Tailwind + Polaris + Supabase Realtime — dashboard, activity, connect, erp
+├── frontend-admin/    # CRA + Tailwind + Supabase Realtime — dashboard, activity, connect, erp
 ├── frontend-scanner/  # CRA PWA + @zxing/browser + idb offline queue
-└── frontend-landing/  # CRA + Tailwind marketing page
+├── frontend-landing/  # CRA + Tailwind marketing page (hero, pricing, CTA)
+└── docs/prd/PRD-SyncStock-IL.md
 ```
+
+### Cross-app navigation
+
+| App | Env vars | `src/lib/urls.js` |
+|---|---|---|
+| frontend-landing | `REACT_APP_ADMIN_URL`, `REACT_APP_SCANNER_URL` | exports both |
+| frontend-admin | `REACT_APP_SCANNER_URL` | exports `SCANNER_URL` |
 
 ## Critical Patterns
 
@@ -100,7 +119,7 @@ Backend uses service-role key (bypasses RLS). Frontend uses authenticated sessio
 | 3 | Atomic scan loop | scan → Shopify → ERP → dashboard (the vertical slice) |
 | 4 | Order webhook | Idempotent, no double-decrement |
 | 5 | Odoo ERP integration | One-way push + manual pull |
-| 6 | Admin frontend | Embedded Polaris, live Realtime, Hebrew RTL |
+| 6 | Admin frontend | Tailwind AppFrame, live Realtime, Hebrew RTL |
 | 7 | Scanner PWA | Offline-capable, idempotent, barcode < 2s |
 | 8 | Resilience & widening | Priority adapter, reconciliation, deploy |
 
@@ -114,7 +133,7 @@ Backend uses service-role key (bypasses RLS). Frontend uses authenticated sessio
 ## Localization
 
 - Hebrew is the default language, RTL layout
-- `RTLProvider` + i18n toggle (Hebrew ↔ English) in both frontends
+- `RTLProvider` + i18n toggle (Hebrew ↔ English) in all three frontends
 - Typography: Heebo/Rubik (Hebrew), Inter (English)
 
 ## Running the Demo

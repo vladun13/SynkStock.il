@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ADMIN_URL } from '../lib/urls';
 
 export default function Nav() {
   const { t, i18n } = useTranslation();
@@ -41,6 +42,9 @@ export default function Nav() {
             {l.label}
           </a>
         ))}
+        <a href={`${ADMIN_URL}/login`} className="cursor-pointer font-medium text-primary transition-colors hover:opacity-80">
+          {t('login')}
+        </a>
       </div>
 
       <div className="flex items-center gap-md">
@@ -51,7 +55,7 @@ export default function Nav() {
           <span className="material-symbols-outlined text-[18px]">language</span>
           <span className="hidden sm:inline">{t('langName')}</span>
         </button>
-        <a href="#cta" className="btn-gradient-sm hidden sm:inline-flex">
+        <a href={`${ADMIN_URL}/login`} className="btn-gradient-sm hidden sm:inline-flex">
           {t('installShopify')}
         </a>
         <button
@@ -76,7 +80,7 @@ export default function Nav() {
                 {l.label}
               </a>
             ))}
-            <a href="#cta" onClick={() => setMobileOpen(false)} className="btn-gradient-sm justify-center">
+            <a href={`${ADMIN_URL}/login`} onClick={() => setMobileOpen(false)} className="btn-gradient-sm justify-center">
               {t('installShopify')}
             </a>
           </div>

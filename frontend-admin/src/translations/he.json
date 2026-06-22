@@ -67,6 +67,7 @@
   "connectionOk": "החיבור תקין",
   "connectionFailed": "החיבור נכשל",
   "signOut": "התנתק",
+  "openScanner": "פתח סורק",
   "noSyncLogs": "אין רשומות סנכרון עדיין",
   "noInventory": "אין מוצרים במיקום זה",
   "loading": "טוען..."
