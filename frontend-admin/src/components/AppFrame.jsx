@@ -126,7 +126,7 @@ export default function AppFrame({ children }) {
 
       {/* Main content */}
       <main
-        className={`mx-auto max-w-container-max space-y-lg p-md pb-24 pt-20 md:p-lg md:pt-20 ${
+        className={`space-y-lg p-md pb-24 pt-20 md:p-lg md:pt-20 ${
           isRTL ? 'md:mr-60' : 'md:ml-60'
         }`}
       >
