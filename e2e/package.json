@@ -1,0 +1,16 @@
+{
+  "name": "syncstock-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end + API test suite for SyncStock IL (Playwright)",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.5.4"
+  }
+}
